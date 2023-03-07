@@ -80,7 +80,7 @@ jogos = [
     ('Crash Bandicoot', 'Hack n Slash', 'PS2'),
     ('Need for Speed', 'Corrida', 'PS2'),
 ]
-cursor.execute(jogos_sql, jogos)
+cursor.executemany(jogos_sql, jogos)
 
 cursor.execute('select * from jogoteca.jogos')
 print(' -------------  Jogos:  -------------')
