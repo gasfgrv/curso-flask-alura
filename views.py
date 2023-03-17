@@ -103,8 +103,8 @@ def deletar(id):
 
 @app.route('/login')
 def login():
-    form = FormularioUsuario()
     proxima = request.args.get('proxima')
+    form = FormularioUsuario()
     return render_template('login.html', proxima=proxima, form=form)
 
 
@@ -117,9 +117,13 @@ def autenticar():
             session['usuario_logado'] = usuario.nickname
             flash(f"{usuario.nickname} logado com sucesso")
             proxima_pagina = request.form['proxima']
+
+            if proxima_pagina == "None":
+                proxima_pagina = url_for('index')
+
             return redirect(proxima_pagina)
 
-    flash('Usuário não logado logado')
+    flash('Usuário não logado')
     return redirect(url_for('login'))
 
 
