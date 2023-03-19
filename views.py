@@ -1,6 +1,7 @@
 import time
 
 from flask import render_template, request, redirect, session, flash, url_for, send_from_directory
+from flask_bcrypt import check_password_hash
 
 from helpers import recupera_imagem, deleta_arquivo, FormularioJogo, FormularioUsuario
 from jogoteca import app, db
@@ -54,7 +55,7 @@ def criar():
 @app.route('/editar/<int:id>')
 def editar(id):
     if 'usuario_logado' not in session or session['usuario_logado'] is None:
-        return redirect(url_for('login', proxima=url_for('editar')))
+        return redirect(url_for('login', proxima=url_for('editar', id=id)))
 
     jogo = Jogos.query.filter_by(id=id).first()
 
@@ -112,16 +113,16 @@ def login():
 def autenticar():
     form = FormularioUsuario(request.form)
     usuario = Usuarios.query.filter_by(nickname=form.nickname.data).first()
-    if usuario:
-        if form.senha.data == usuario.senha:
-            session['usuario_logado'] = usuario.nickname
-            flash(f"{usuario.nickname} logado com sucesso")
-            proxima_pagina = request.form['proxima']
+    senha = check_password_hash(usuario.senha, form.senha.data)
+    if usuario and senha:
+        session['usuario_logado'] = usuario.nickname
+        flash(f"{usuario.nickname} logado com sucesso")
+        proxima_pagina = request.form['proxima']
 
-            if proxima_pagina == "None":
-                proxima_pagina = url_for('index')
+        if proxima_pagina == "None":
+            proxima_pagina = url_for('index')
 
-            return redirect(proxima_pagina)
+        return redirect(proxima_pagina)
 
     flash('Usuário não logado')
     return redirect(url_for('login'))
