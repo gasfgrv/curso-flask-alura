@@ -19,16 +19,16 @@ class FormularioUsuario(FlaskForm):
     login = SubmitField('Login')
 
 
-def recupera_imagem(id):
+def recupera_imagem(id_jogo):
     for nome_arquivo in os.listdir(app.config['UPLOAD_PATH']):
-        if f'capa-{id}' in nome_arquivo:
+        if f'capa-{id_jogo}' in nome_arquivo:
             return nome_arquivo
 
     return 'capa_padrao.jpg'
 
 
-def deleta_arquivo(id):
-    arquivo = recupera_imagem(id)
+def deleta_arquivo(id_jogo):
+    arquivo = recupera_imagem(id_jogo)
 
     if arquivo != 'capa_padrao.jpg':
         os.remove(os.path.join(app.config['UPLOAD_PATH'], arquivo))

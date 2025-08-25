@@ -53,19 +53,19 @@ def criar():
 
 
 @app.route('/editar/<int:id>')
-def editar(id):
+def editar(id_jogo):
     if 'usuario_logado' not in session or session['usuario_logado'] is None:
-        return redirect(url_for('login', proxima=url_for('editar', id=id)))
+        return redirect(url_for('login', proxima=url_for('editar', id=id_jogo)))
 
-    jogo = Jogos.query.filter_by(id=id).first()
+    jogo = Jogos.query.filter_by(id=id_jogo).first()
 
     form = FormularioJogo()
     form.nome.data = jogo.nome
     form.categoria.data = jogo.categoria
     form.console.data = jogo.categoria
 
-    capa_jogo = recupera_imagem(id)
-    return render_template('editar.html', titulo='Editando jogo', id=id, capa_jogo=capa_jogo, form=form)
+    capa_jogo = recupera_imagem(id_jogo)
+    return render_template('editar.html', titulo='Editando jogo', id=id_jogo, capa_jogo=capa_jogo, form=form)
 
 
 @app.route('/atualizar', methods=['POST'])
@@ -91,11 +91,11 @@ def atualizar():
 
 
 @app.route('/deletar/<int:id>')
-def deletar(id):
+def deletar(id_jogo):
     if 'usuario_logado' not in session or session['usuario_logado'] is None:
         return redirect(url_for('login', proxima=url_for('novo')))
 
-    Jogos.query.filter_by(id=id).delete()
+    Jogos.query.filter_by(id=id_jogo).delete()
     db.session.commit()
     flash('Jogo deletado com sucesso!')
 

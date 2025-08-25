@@ -5,11 +5,7 @@ from mysql.connector import errorcode
 print("Conectando...")
 
 try:
-    conn = mysql.connector.connect(
-        host='localhost',
-        user='root',
-        password='root'
-    )
+    conn = mysql.connector.connect(host='localhost', user='root', password='root')
 except mysql.connector.Error as err:
     if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
         print('Existe algo errado no nome de usuário ou senha')
@@ -17,35 +13,29 @@ except mysql.connector.Error as err:
         print(err)
 
 cursor = conn.cursor()
-
 cursor.execute("DROP DATABASE IF EXISTS `jogoteca`;")
-
 cursor.execute("CREATE DATABASE `jogoteca`;")
-
 cursor.execute("USE `jogoteca`;")
 
 # criando tabelas
-TABLES = {}
-
-TABLES['Jogos'] = ('''
+TABLES = {'Jogos': ('''
       CREATE TABLE `jogos` (
       `id` int(11) NOT NULL AUTO_INCREMENT,
       `nome` varchar(50) NOT NULL,
       `categoria` varchar(40) NOT NULL,
       `console` varchar(20) NOT NULL,
       PRIMARY KEY (`id`)
-      ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;''')
-
-TABLES['Usuarios'] = ('''
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;'''), 'Usuarios': ('''
       CREATE TABLE `usuarios` (
       `nome` varchar(20) NOT NULL,
       `nickname` varchar(8) NOT NULL,
       `senha` varchar(100) NOT NULL,
       PRIMARY KEY (`nickname`)
-      ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;''')
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;''')}
 
 for tabela_nome in TABLES:
     tabela_sql = TABLES[tabela_nome]
+
     try:
         print(f'Criando tabela {tabela_nome}:', end=' ')
         cursor.execute(tabela_sql)
@@ -64,10 +54,12 @@ usuarios = [
     ("Camila Ferreira", "Mila", generate_password_hash("paozinho").decode('utf-8')),
     ("Guilherme Louro", "Cake", generate_password_hash("python_eh_vida").decode('utf-8'))
 ]
-cursor.executemany(usuario_sql, usuarios)
 
+cursor.executemany(usuario_sql, usuarios)
 cursor.execute('select * from jogoteca.usuarios')
+
 print(' -------------  Usuários:  -------------')
+
 for user in cursor.fetchall():
     print(user[1])
 
@@ -81,10 +73,12 @@ jogos = [
     ('Crash Bandicoot', 'Hack n Slash', 'PS2'),
     ('Need for Speed', 'Corrida', 'PS2'),
 ]
-cursor.executemany(jogos_sql, jogos)
 
+cursor.executemany(jogos_sql, jogos)
 cursor.execute('select * from jogoteca.jogos')
+
 print(' -------------  Jogos:  -------------')
+
 for jogo in cursor.fetchall():
     print(jogo[1])
 
